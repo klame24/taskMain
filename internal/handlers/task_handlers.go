@@ -13,6 +13,8 @@ type TaskHandlers interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	Done(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
+	GetByID(w http.ResponseWriter, r *http.Request)
+	GetAll(w http.ResponseWriter, r *http.Request)
 }
 
 type taskHandlers struct {
@@ -78,4 +80,40 @@ func (h *taskHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("success delete task!")
+}
+
+func (h *taskHandlers) GetByID(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "incorrectly passed value", http.StatusBadRequest)
+		return
+	}
+
+	task, err := h.s.GetByID(r.Context(), id)
+	if err != nil {
+		http.Error(w, "can't find this task", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(task)
+}
+
+func (h *taskHandlers) GetAll(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "incorrectly passed value", http.StatusBadRequest)
+		return
+	}
+
+	tasks, err := h.s.GetAll(r.Context(), id)
+	if err != nil {
+		http.Error(w, "can't find this task", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tasks)
 }

@@ -10,6 +10,8 @@ type TaskService interface {
 	Create(ctx context.Context, projectID int, title, description string) (int, error)
 	Done(ctx context.Context, taskID int) error
 	Delete(ctx context.Context, taskID int) error
+	GetByID(ctx context.Context, taskID int) (*models.Task, error)
+	GetAll(ctx context.Context, projectID int) ([]*models.Task, error)
 }
 
 type taskService struct {
@@ -43,4 +45,16 @@ func (s *taskService) Delete(ctx context.Context, taskID int) error {
 	err := s.r.Delete(ctx, taskID)
 
 	return err
+}
+
+func (s *taskService) GetByID(ctx context.Context, taskID int) (*models.Task, error) {
+	task, err := s.r.GetByID(ctx, taskID)
+
+	return task, err
+}
+
+func (s *taskService) GetAll(ctx context.Context, projectID int) ([]*models.Task, error) {
+	tasks, err := s.r.GetAll(ctx, projectID)
+
+	return tasks, err
 }

@@ -46,7 +46,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	userRoutes := routes.SetupUserRoutes(userH)
-	projectRoutes := routes.SetupProjectRoutes(projectH)
+	projectRoutes := routes.SetupProjectRoutes(projectH, taskH)
 	taskroutes := routes.SetupTaskRoutes(taskH)
 
 	mux.Handle("/users/", http.StripPrefix("/users", userRoutes))

@@ -12,8 +12,8 @@ type TaskRepository interface {
 	Create(ctx context.Context, task *models.Task) (int, error)
 	Done(ctx context.Context, taskID int) error
 	Delete(ctx context.Context, taskID int) error
-	// GetByID
-	// GetAll
+	GetByID(ctx context.Context, taskID int) (*models.Task, error)
+	GetAll(ctx context.Context, projectID int) ([]*models.Task, error)
 }
 
 type taskRepository struct {
@@ -70,4 +70,61 @@ func (r *taskRepository) Delete(ctx context.Context, taskID int) error {
 	_, err := r.db.Exec(ctx, sqlQuery, taskID)
 
 	return err
+}
+
+func (r *taskRepository) GetByID(ctx context.Context, taskID int) (*models.Task, error) {
+	task := models.Task{}
+	task.ID = taskID
+
+	sqlQuery := `
+		SELECT
+			project_id, title, description, status_id, created_at
+		FROM tasks
+		WHERE tasks.id=$1;
+	`
+
+	err := r.db.QueryRow(ctx, sqlQuery, taskID).Scan(
+		&task.ProjectID,
+		&task.Title,
+		&task.Description,
+		&task.StatusID,
+		&task.CreatedAt,
+	)
+
+	return &task, err
+}
+
+func (r *taskRepository) GetAll(ctx context.Context, projectID int) ([]*models.Task, error) {
+	var tasks []*models.Task
+
+	sqlQuery := `
+		SELECT
+			id, project_id, title, description, status_id, created_at
+		FROM tasks
+		WHERE project_id=$1;
+	`
+	rows, err := r.db.Query(ctx, sqlQuery, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		task := models.Task{}
+
+		err := rows.Scan(
+			&task.ID,
+			&task.ProjectID,
+			&task.Title,
+			&task.Description,
+			&task.StatusID,
+			&task.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, &task)
+	}
+
+	return tasks, nil
 }

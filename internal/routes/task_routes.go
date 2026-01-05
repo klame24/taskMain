@@ -8,6 +8,7 @@ import (
 func SetupTaskRoutes(h handlers.TaskHandlers) *http.ServeMux {
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /{id}", h.GetByID)
 	mux.HandleFunc("POST /", h.Create)
 	mux.HandleFunc("PUT /{id}", h.Done)
 	mux.HandleFunc("DELETE /{id}", h.Delete)
