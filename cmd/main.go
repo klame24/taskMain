@@ -30,23 +30,28 @@ func main() {
 	// инициализация репозиториев
 	userR := repositories.NewUserRepository(conn)
 	projectR := repositories.NewProjectRepository(conn)
+	taskR := repositories.NewTaskRepository(conn)
 
 	// инициализация сервисов
 	userS := services.NewUserService(userR)
 	projectS := services.NewProjectService(projectR)
+	taskS := services.NewTaskService(taskR)
 
 	// инициализация хендлеров
 	userH := handlers.NewUserHandler(userS)
 	projectH := handlers.NewProjectHandlers(projectS)
+	taskH := handlers.NewTaskHandler(taskS)
 
 	// инициалазия сервера
 	mux := http.NewServeMux()
 
 	userRoutes := routes.SetupUserRoutes(userH)
 	projectRoutes := routes.SetupProjectRoutes(projectH)
+	taskroutes := routes.SetupTaskRoutes(taskH)
 
 	mux.Handle("/users/", http.StripPrefix("/users", userRoutes))
 	mux.Handle("/projects/", http.StripPrefix("/projects", projectRoutes))
+	mux.Handle("/tasks/", http.StripPrefix("/tasks", taskroutes))
 
 	err = http.ListenAndServe(":5050", mux)
 	if err != nil {
