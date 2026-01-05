@@ -5,11 +5,11 @@ import (
 	"taskMain/internal/handlers"
 )
 
-func SetupRoutes(h handlers.UserHandler) *http.ServeMux {
+func SetupUserRoutes(h handlers.UserHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /user/{id}", h.GetByID)
-	mux.HandleFunc("POST /user", h.Create)
+	mux.HandleFunc("GET /{id}", h.GetByID)
+	mux.HandleFunc("POST /", h.Create)
 
 	return mux
 }
