@@ -1,0 +1,7 @@
+db.createUser({
+  user: "app_user",
+  pwd: "app_password",
+  roles: [
+    { role: "readWrite", db: "auth_db" }
+  ]
+});

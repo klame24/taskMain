@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: taskmain-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"  # Прокидываем порт на localhost
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: your_password
+      MONGO_INITDB_DATABASE: auth_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Инициализация
+
+volumes:
+  mongodb_data:

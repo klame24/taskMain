@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"taskMain/internal/database"
+	"taskMain/internal/database/mongo"
+	"taskMain/internal/database/postgres"
 	"taskMain/internal/handlers"
 	"taskMain/internal/repositories"
 	"taskMain/internal/routes"
@@ -20,12 +21,21 @@ func main() {
 
 	ctx := context.Background()
 
-	conn, err := database.ConnectDB(ctx)
+	conn, err := postgres.ConnectPostgresDB(ctx)
 	if err != nil {
-		fmt.Println("Can't connect to DB!")
+		fmt.Println("Can't connect to Postgres DB!")
+		panic(err)
 	}
 
-	fmt.Println("Successfully connected to DB!")
+	fmt.Println("Successfully connected to Postgres DB!")
+
+	_, err = mongo.ConnectMongoDB(ctx)
+	if err != nil {
+		fmt.Println("Can't connect to Mongo DB!")
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected to Mongo DB!")
 
 	// инициализация репозиториев
 	userR := repositories.NewUserRepository(conn)
