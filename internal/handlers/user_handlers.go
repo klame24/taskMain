@@ -9,7 +9,6 @@ import (
 )
 
 type UserHandler interface {
-	Create(w http.ResponseWriter, r *http.Request)
 	GetByID(w http.ResponseWriter, r *http.Request)
 }
 
@@ -23,24 +22,6 @@ func NewUserHandler(s services.UserService) UserHandler {
 	}
 }
 
-func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
-	req := userDTO.CreateUserRequest{}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	userID, err := h.s.Create(r.Context(), req.Name, req.Surname, req.Nickname, req.Email, req.PasswordHash)
-	if err != nil {
-		http.Error(w, "can't create user", http.StatusBadRequest)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userID)
-}
-
 func (h *userHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
@@ -51,7 +32,7 @@ func (h *userHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := userDTO.GetByIDResponse{
+	resp := userDTO.GetUserResponse{
 		Name:     user.Name,
 		Surname:  user.Surname,
 		Nickname: user.Nickname,

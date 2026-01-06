@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) (int, error)
 	GetByID(ctx context.Context, userID int) (*models.User, error)
+	GetByNickname(ctx context.Context, userNick string) (*models.User, error)
 }
 
 type userRepository struct {
@@ -57,6 +58,29 @@ func (r *userRepository) GetByID(ctx context.Context, userID int) (*models.User,
 		&user.Surname,
 		&user.Nickname,
 		&user.Email,
+	)
+
+	return &user, err
+}
+
+func (r *userRepository) GetByNickname(ctx context.Context, userNick string) (*models.User, error) {
+	user := models.User{}
+
+	sqlQuery := `
+		SELECT 
+			id, name, surname, nickname, email, password_hash
+		FROM
+			users
+		WHERE users.nickname=$1;
+	`
+
+	err := r.db.QueryRow(ctx, sqlQuery, userNick).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Surname,
+		&user.Nickname,
+		&user.Email,
+		&user.PasswordHash,
 	)
 
 	return &user, err

@@ -7,10 +7,10 @@ import (
 )
 
 type UserService interface {
-	Create(
-		ctx context.Context, name, surname,
-		nickname, email, passwordHash string,
-	) (int, error)
+	// Create(
+	// 	ctx context.Context, name, surname,
+	// 	nickname, email, passwordHash string,
+	// ) (int, error)
 	GetByID(ctx context.Context, userID int) (*models.User, error)
 }
 
@@ -24,22 +24,27 @@ func NewUserService(r repositories.UserRepository) UserService {
 	}
 }
 
-func (s *userService) Create(
-	ctx context.Context, name, surname,
-	nickname, email, passwordHash string,
-) (int, error) {
-	user := models.User{
-		Name:         name,
-		Surname:      surname,
-		Nickname:     nickname,
-		Email:        email,
-		PasswordHash: passwordHash,
-	}
+// func (s *userService) Create(
+// 	ctx context.Context, name, surname,
+// 	nickname, email, psswrd string,
+// ) (int, error) {
+// 	hashedPassword, err := password.HashPassword(psswrd)
+// 	if err != nil {
+// 		return 0, nil
+// 	}
 
-	userID, err := s.r.Create(ctx, &user)
+// 	user := models.User{
+// 		Name:         name,
+// 		Surname:      surname,
+// 		Nickname:     nickname,
+// 		Email:        email,
+// 		PasswordHash: hashedPassword,
+// 	}
 
-	return userID, err
-}
+// 	userID, err := s.r.Create(ctx, &user)
+
+// 	return userID, err
+// }
 
 func (s *userService) GetByID(ctx context.Context, userID int) (*models.User, error) {
 	user, err := s.r.GetByID(ctx, userID)
