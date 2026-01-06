@@ -42,8 +42,8 @@ func main() {
 	// jwt
 	jwtSecret := "secret-key"
 
-	accessTokenExp := 24 * time.Hour      // 24 часа
-	refreshTokenExp := 7 * 24 * time.Hour // 7 дней
+	accessTokenExp := 24 * time.Hour
+	refreshTokenExp := 7 * 24 * time.Hour 
 
 	jwtManager := jwt.NewManager(jwtSecret, accessTokenExp)
 
